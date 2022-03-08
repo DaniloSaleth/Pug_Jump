@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="PT-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pug</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" charset="UTF-8" defer></script>
+</head>
+<body>
+        <div class="img_fundo">
+            <div class="img_char">
+                
+            </div>
+            <div class="menu">
+                <img src="img/pug_vida.png" alt="vida" class="vida1">
+                <img src="img/pug_vida.png" alt="vida" class="vida2">
+                <img src="img/pug_vida.png" alt="vida" class="vida3">
+            </div>
+            <div class="som" onclick="ativaSom()">
+
+            </div>
+            <div class="trilha" onclick="ativaTrilha()">
+                
+            </div>
+            <div class="placar">
+                <img src="img/bat.gif" alt="morcego">
+                <div class="pontos">
+                </div>
+            </div>
+        </div>
+        <audio id="somPulo" src="pulo_saindo.mp3" hidden></audio>
+        <audio id="somPulo_chegando" src="pulo_chegando.wav" hidden></audio>
+        <audio id="morcego" src="morcego_Spawn.mp3" hidden></audio>
+        <audio id="hit" src="hit.mp3" hidden></audio>
+        <audio id="trilha" src="trilha.mp3" hidden></audio>
+        <audio id="gameOver" src="game_over.mp3" hidden></audio>
+        <audio id="ovo" src="ovo_spawn.mp3" hidden></audio>
+</body>
+</html>
