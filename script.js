@@ -138,7 +138,7 @@ function criarInimigo() {
         } else if (posicaoInimigo > 0 && posicaoInimigo < 60 && posicao < 60) {
             //Tomou uma ratada
             let vida = document.getElementsByClassName('vida' + numVidas);
-            //numVidas--;
+            numVidas--;
             if (vida[0]) {
                 vida[0].style.display = "none";
             }
