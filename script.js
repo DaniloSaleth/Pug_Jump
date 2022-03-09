@@ -10,6 +10,7 @@ const iconTrilha = document.querySelector('.trilha');
 const trilha = document.getElementById("trilha");
 const fim = document.getElementById("gameOver");
 const ovo = document.getElementById("ovo");
+const pauseInterface = document.getElementById("pause");
 
 let som = true;
 let trilhaSonora = true;
@@ -18,6 +19,7 @@ let morto = false;
 let seMovendo = false;
 let posicao = 0;
 let pontos = 0;
+let pause = false;
 
 trilha.currentTime = 0;
 trilha.play();
@@ -50,8 +52,13 @@ function ativaSom() {
 
 function trataBotaoApertado(event) {
     if (event.code === "Escape" && !morto) {
-
-        alert("Jogo pausado.");
+        pause = !pause;
+        if (pause) {
+            pauseInterface.style.display = "block";
+        } else {
+            pauseInterface.style.display = "None";
+            criarInimigo()
+        }
     } else if (event.code === "Space" || event.type == 'touchstart') {
         if (!seMovendo && morto == false) {
             pulo();
@@ -103,7 +110,12 @@ function pulo() {
 }
 
 function criarInimigo() {
-
+    if (pause) {
+        if (InimigoIntervalo) {    
+            clearInterval(InimigoIntervalo);
+            setTimeout(criarInimigo, tempoAleatorio);
+        }
+    }
     const Inimigo = document.createElement('div');
 
     let posicaoInimigo = 1000;
