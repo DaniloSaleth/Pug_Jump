@@ -39,6 +39,18 @@ function ativaTrilha() {
     }
 }
 
+function pausaTodosSom() {
+    trilha.pause();
+    ativaSom();
+}
+
+function playTodosSom() {
+    if (trilhaSonora) {
+        trilha.play();
+    }
+    ativaSom();
+}
+
 function ativaSom() {
     som = som == true ? false : true;
     if (som) {
@@ -50,24 +62,34 @@ function ativaSom() {
     }
 }
 
+function playGame() {
+    pause = false;
+    pauseInterface.style.display = "None";
+    playTodosSom()
+}
+
+function pauseGame() {
+    pause = true;
+    pauseInterface.style.display = "block";
+    pausaTodosSom();
+}
+
 function trataBotaoApertado(event) {
     if (event.code === "Escape" && !morto) {
-        pause = !pause;
-        if (pause) {
-            pauseInterface.style.display = "block";
+        if (!pause) {
+            pauseGame();
         } else {
-            pauseInterface.style.display = "None";
-            criarInimigo()
+            playGame();
         }
     } else if (event.code === "Space" || event.type == 'touchstart') {
-        if (!seMovendo && morto == false) {
+        if (!seMovendo && morto == false && !pause) {
             pulo();
         } else if (morto == true) {
             document.location.reload();
         }
-    } else if (event.code === "KeyS" && !morto) {
+    } else if (event.code === "KeyS" && !morto && !pause) {
         ativaSom();
-    } else if (event.code === "KeyD" && !morto) {
+    } else if (event.code === "KeyD" && !morto && !pause) {
         ativaTrilha();
     }
 }
@@ -98,90 +120,93 @@ function pulo() {
                         somPulo_chegando.play();
                     }
                 } else {
-                    posicao -= 8;
+                    if (!pause) {
+                        posicao -= 8;
+                        personagem.style.bottom = posicao + "px";
+                    }
                 }
-                personagem.style.bottom = posicao + "px";
             }, 20);
         } else {
-            posicao += 8;
-            personagem.style.bottom = posicao + "px";
+            if (!pause) {
+                posicao += 8;
+                personagem.style.bottom = posicao + "px";
+            }
         }
     }, 20);
 }
 
 function criarInimigo() {
-    if (pause) {
-        if (InimigoIntervalo) {    
-            clearInterval(InimigoIntervalo);
-            setTimeout(criarInimigo, tempoAleatorio);
-        }
-    }
-    const Inimigo = document.createElement('div');
-
     let posicaoInimigo = 1000;
     let tempoAleatorio = Math.random() * 6000;
     let velocidade = 5;
 
-    if (pontos > 5) {
-        velocidade = pontos;
-    }
+    if (pause || morto) {
 
-    if (tempoAleatorio < 1000) {
-        tempoAleatorio = 1000;
-    }
-
-    Inimigo.classList.add("Inimigo");
-
-    if (pontos < 5) {
-        Inimigo.classList.add("egg");
     } else {
-        Inimigo.classList.add("morcego");
-    }
+        const Inimigo = document.createElement('div');
 
-    Inimigo.style.left = 1000 + 'px';
-    background.appendChild(Inimigo);
+        if (pontos > 5) {
+            velocidade = pontos;
+        }
 
-    let InimigoIntervalo = setInterval(function () {
-        if (posicaoInimigo < -20) {
-            clearInterval(InimigoIntervalo);
-            background.removeChild(Inimigo);
-            pontos++;
-            pontuacao.innerHTML = "<p class='num_pontos'>" + pontos + "</p>"
-        } else if (posicaoInimigo > 0 && posicaoInimigo < 60 && posicao < 60) {
-            //Tomou uma ratada
-            let vida = document.getElementsByClassName('vida' + numVidas);
-            numVidas--;
-            if (vida[0]) {
-                vida[0].style.display = "none";
-            }
-            clearInterval(InimigoIntervalo);
-            background.removeChild(Inimigo);
-            if (numVidas == 0) {
-                trilha.pause();
-                somPulo.pause();
-                somPulo_chegando.pause();
-                hit.pause();
-                
-                document.getElementsByClassName("img_fundo")[0].style.animation = "none";
-                personagem.style.display ="none";
-                fim.currentTime = 0;
-                fim.play();
-                
-                window.setInterval(()=>document.body.innerHTML = "<div class='fimDeJogo'> <img src='game_over2.png' alt='game_over' class='game_over'><img src='sad_pug.gif' alt='sad_pug' class='sad_pug'><div  class='totalPontos'><h1>Total de pontos: </h1><p>"+pontos+"</p></div><p class='jogarNovamente'>Pressione ESPAÇO para jogar novamente</p></div><div class='rodape'><h2>Creditos</h2><div>Desenvolvedor: <a href='https://www.linkedin.com/in/danilo-saleth/'>Danilo Saleth</a></div><div>Trilha sonora: <a href='https://soundcloud.com/mota-o-marmota'>João Pedro Mota</a></div></div>",4000);
-                morto = true;
-            }
-            if (!morto) {
-                if (som) {
-                    hit.currentTime = 0;
-                    hit.play();
+        if (tempoAleatorio < 1000) {
+            tempoAleatorio = 1000;
+        }
+
+        Inimigo.classList.add("Inimigo");
+
+        if (pontos < 5) {
+            Inimigo.classList.add("egg");
+        } else {
+            Inimigo.classList.add("morcego");
+        }
+
+        Inimigo.style.left = 1000 + 'px';
+        background.appendChild(Inimigo);
+
+        let InimigoIntervalo = setInterval(function () {
+            if (posicaoInimigo < -20) {
+                clearInterval(InimigoIntervalo);
+                background.removeChild(Inimigo);
+                pontos++;
+                pontuacao.innerHTML = "<p class='num_pontos'>" + pontos + "</p>"
+            } else if (posicaoInimigo > 0 && posicaoInimigo < 60 && posicao < 60) {
+                //Tomou uma ratada
+                let vida = document.getElementsByClassName('vida' + numVidas);
+                numVidas--;
+                if (vida[0]) {
+                    vida[0].style.display = "none";
+                }
+                clearInterval(InimigoIntervalo);
+                background.removeChild(Inimigo);
+                if (numVidas == 0) {
+                    trilha.pause();
+                    somPulo.pause();
+                    somPulo_chegando.pause();
+                    hit.pause();
+
+                    document.getElementsByClassName("img_fundo")[0].style.animation = "none";
+                    personagem.style.display = "none";
+                    fim.currentTime = 0;
+                    fim.play();
+
+                    window.setInterval(() => document.body.innerHTML = "<div class='fimDeJogo'> <img src='img/game_over2.png' alt='game_over' class='game_over'><img src='img/sad_pug.gif' alt='sad_pug' class='sad_pug'><div  class='totalPontos'><h1>Total de pontos: </h1><p>" + pontos + "</p></div><p class='jogarNovamente'>Pressione ESPAÇO para jogar novamente</p></div><div class='rodape'><h2>Creditos</h2><div>Desenvolvedor: <a href='https://www.linkedin.com/in/danilo-saleth/'>Danilo Saleth</a></div><div>Trilha sonora: <a href='https://soundcloud.com/mota-o-marmota'>João Pedro Mota</a></div></div>", 4000);
+                    morto = true;
+                }
+                if (!morto) {
+                    if (som) {
+                        hit.currentTime = 0;
+                        hit.play();
+                    }
+                }
+            } else {
+                if(!pause){
+                    posicaoInimigo -= velocidade;
+                    Inimigo.style.left = posicaoInimigo + "px";
                 }
             }
-        } else {
-            posicaoInimigo -= velocidade;
-            Inimigo.style.left = posicaoInimigo + "px";
-        }
-    }, 20);
-
+        }, 20);
+    }
     if (!morto) {
         if (som) {
             if (pontos < 5) {
@@ -191,7 +216,7 @@ function criarInimigo() {
                 morcego.currentTime = 0;
                 morcego.play();
             }
-        
+
         }
         setTimeout(criarInimigo, tempoAleatorio);
     }
